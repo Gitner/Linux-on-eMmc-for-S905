@@ -12,5 +12,20 @@ There is a command (`blkdevparts`) that can be passed as an argument from U-Boot
 
 ```mermaid
 graph TD;
-    Step 1 U-Boot Initialization U-Boot initializes and prepares the boot process-->Step 2 Load Kernel & Device TreeU-Boot loads the kernel and device tree directly from eMMC using mmc read-->Step 3 Transfer to RAM Kernel and device tree are transferred to RAM-->Step 4 Launch Kernel U-Boot launches the kernel using the bootm command-->Step 5 Pass Partition Map Kernel receives the eMMC partition map via the blkdevparts argument;
+    id1[U-Boot initializes and prepares the boot process]-->id2[Loads the kernel and device tree directly from eMMC using mmc read]-->id3[Kernel and device tree are transferred to RAM]-->id4[U-Boot launches the kernel using the bootm command]-->id5[Kernel receives the eMMC partition map via the blkdevparts argument];
 ```
+# ram and emmc addresses
+setenv os_addr            0x02000000  
+setenv emmc_os_offset     0x2100  
+setenv emmc_os_size       0xFF00  
+setenv dtb_addr           0x04000000  
+setenv emmc_dtb_offset    0x2060  
+setenv emmc_dtb_size      0xa0  
+
+# args passed to kernel
+setenv bootargs           'blkdevparts=mmcblk1:4M(bootloader),48K@4M(emmc),80K@4144K(dtb),32640K@4224K(kernel),856M@36M(env),-(root) zswap.enabled=0 root=/dev/mmcblk1p6 rw rootfstype=ext4 rootwait console=tty0 no_console_suspend consoleblank=0 coherent_pool=2M net.ifnames=0 fsck.repair=yes fsck.mode=skip init_on_alloc=1 init_on_free=1 randomize_kstack_offset=on kfence.sample_interval=100 debugfs=off kfence.deferrable=1 watchdog.stop_on_reboot=0'  
+
+# loading device tree
+mmc read ${dtb_addr} ${emmc_dtb_offset} ${emmc_dtb_size}  
+# read Linux kernel
+mmc read ${os_addr} ${emmc_os_offset} ${emmc_os_size}  
