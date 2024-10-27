@@ -29,3 +29,5 @@ setenv bootargs           'blkdevparts=mmcblk1:4M(bootloader),48K@4M(emmc),80K@4
 mmc read ${dtb_addr} ${emmc_dtb_offset} ${emmc_dtb_size}  
 # read Linux kernel
 mmc read ${os_addr} ${emmc_os_offset} ${emmc_os_size}  
+
+In my search for distributions for TV boxes, I came across a fascinating project by developer devmfc. He has created an extremely lightweight distribution available in two versions, one based on Debian and the other on Ubuntu. As I mentioned earlier, I value efficiency, and this distribution represents the ideal setup for me. Moreover, the developer hacked Amlogic’s customized U-Boot (stock version) by identifying the header that makes it recognize the expected kernel—rejecting any other, including ours. This elegant solution eliminates the need for chainloading with a second U-Boot (mainline), as is typically required with other distributions, where a secondary bootloader is needed to launch the kernel.
