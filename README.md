@@ -31,3 +31,10 @@ mmc read ${dtb_addr} ${emmc_dtb_offset} ${emmc_dtb_size}
 mmc read ${os_addr} ${emmc_os_offset} ${emmc_os_size}  
 
 In my search for distributions for TV boxes, I came across a fascinating project by developer devmfc. He has created an extremely lightweight distribution available in two versions, one based on Debian and the other on Ubuntu. As I mentioned earlier, I value efficiency, and this distribution represents the ideal setup for me. Moreover, the developer hacked Amlogic’s customized U-Boot (stock version) by identifying the header that makes it recognize the expected kernel—rejecting any other, including ours. This elegant solution eliminates the need for chainloading with a second U-Boot (mainline), as is typically required with other distributions, where a secondary bootloader is needed to launch the kernel.
+
+After gathering all this information, the final step is to develop a solution that allows us to customize the partition table to fit our needs. Specifically, my original partition map, before customization, was as follows:
+
+|    Address    |     Block     |
+| ------------- | ------------- |
+|      0        |   Bootloader  |
+|      4M       |     Cache     |
