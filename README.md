@@ -34,7 +34,19 @@ In my search for distributions for TV boxes, I came across a fascinating project
 
 After gathering all this information, the final step is to develop a solution that allows us to customize the partition table to fit our needs. Specifically, my original partition map, before customization, was as follows:
 
-|    Address    |     Block     |
-| ------------- | ------------- |
-|      0        |   Bootloader  |
-|      4M       |     Cache     |
+|    Address    |  size  | gap |     Block     |
+| ------------- | ------ | --- | ------------- |
+|       0       |    4M  | 32M |   bootloader  |
+|      36M      |   64M  |  8M |    reserved   |
+|     108M      |  768M  |  8M |     cache     |
+|     884M      |    8M  |  8M |      env      |
+|     900M      |   32M  |  8M |     logo      |
+|     940M      |   32M  |  8M |    recovery   |
+|     980M      |    8M  |  8M |      rsv      |
+|     996M      |    8M  |  8M |      tee      |
+|    1012M      |   32M  |  8M |     crypt     |
+|    1052M      |   32M  |  8M |    bootmisc   |
+|    1092M      |  512M  |  8M |   instaboot   |
+|    1612M      |   32M  |  8M |     boot      |
+|    1652M      | 1408M  |  8M |    system     |
+|    3068M      | 4325M  |     |     data      |
