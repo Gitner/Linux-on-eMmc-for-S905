@@ -50,3 +50,14 @@ After gathering all this information, the final step is to develop a solution th
 |    1612M      |   32M  |  8M |     boot      |
 |    1652M      | 1408M  |  8M |    system     |
 |    3068M      | 4325M  |     |     data      |
+
+it must become:
+
+|    Address    |  size  |     Block     |
+| ------------- | ------ | ------------- |
+|       0       |     4M |   bootloader  |
+|       4M      |    48K |      emmc     |
+|    4144K      |    80K |      dtb      |
+|    4224K      | 32640K |     kernel    |
+|      36M      |   856M |      env      |
+|     892M      |    -   |      root     |
