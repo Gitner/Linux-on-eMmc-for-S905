@@ -51,7 +51,7 @@ After gathering all this information, the final step is to develop a solution th
 |    1652M      | 1408M  |  8M |    system     |
 |    3068M      | 4325M  |     |     data      |
 
-it must become:
+it could become:
 
 |    Address    |  size  |     Block     |
 | ------------- | ------ | ------------- |
