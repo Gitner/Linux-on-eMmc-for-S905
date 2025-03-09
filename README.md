@@ -14,6 +14,13 @@ There is a command (`blkdevparts`) that can be passed as an argument from U-Boot
 graph TD;
     id1[U-Boot initializes and prepares the boot process]-->id2[Loads the kernel and device tree directly from eMMC using mmc read]-->id3[Kernel and device tree are transferred to RAM]-->id4[U-Boot launches the kernel using the bootm command]-->id5[Kernel receives the eMMC partition map via the blkdevparts argument];
 ```
+# naming partitions
+Reading 7Ji's blog, particularly [this](https://7ji.github.io/embedded/2023/02/20/gxbb-emmc.html) article, I learned how to name partitions, simplifying the dd command by specifying the partition name. For example, to write the kernel, it’s enough to define the of=/dev/block/kernel parameter within the command, immediately identifying the location to write to on the eMMC.
+```
+tee /etc/udev/rules.d/99-emmc-links.rules > /dev/null <<EOF
+SUBSYSTEM=="block", KERNEL=="mmcblk1p*", ENV{DEVTYPE}=="partition", SYMLINK+="block/$env{PARTNAME}"
+EOF
+```
 # ram and emmc addresses
 setenv os_addr            0x02000000  
 setenv emmc_os_offset     0x2100  
