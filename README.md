@@ -60,11 +60,11 @@ After gathering all this information, the final step is to develop a solution th
 
 it could become:
 
-|    Address    |  size  |     Block (location)     |
-| ------------- | ------ | ------------------------ |
-|       0       |     4M |  /dev/block/bootloader   |
-|       4M      |    48K |     /dev/block/emmc      |
-|    4144K      |    80K |     /dev/block/dtb       |
-|    4224K      | 32640K |    /dev/block/kernel     |
-|      36M      |   856M |     /dev/block/env       |
-|     892M      |    -   |     /dev/block/root      |
+|  Address  |  size  |  /dev/block/  |
+| --------- | ------ | ------------- |
+|       0   |     4M |  bootloader   |
+|       4M  |    48K |     emmc      |
+|    4144K  |    80K |     dtb       |
+|    4224K  | 32640K |    kernel     |
+|      36M  |   856M |     env       |
+|     892M  |    -   |    root       |
