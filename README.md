@@ -21,6 +21,23 @@ tee /etc/udev/rules.d/99-emmc-links.rules > /dev/null <<EOF
 SUBSYSTEM=="block", KERNEL=="mmcblk1p*", ENV{DEVTYPE}=="partition", SYMLINK+="block/$env{PARTNAME}"
 EOF
 ```
+Once the system has rebooted, the output of the lsblk command should be:
+```
+NAME         MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+mmcblk1      179:0    0  7,2G  0 disk 
+├─mmcblk1p1  179:1    0    4M  0 part 
+├─mmcblk1p2  179:2    0   48K  0 part 
+├─mmcblk1p3  179:3    0   80K  0 part 
+├─mmcblk1p4  179:4    0 31,9M  0 part 
+├─mmcblk1p5  179:5    0  856M  0 part 
+└─mmcblk1p6  179:6    0  6,3G  0 part /
+```
+By setting the bootargs (as shown below):
+```
+blkdevparts=mmcblk1:4M(bootloader),48K@4M(emmc),80K@4144K(dtb),32640K@4224K(kernel),856M@36M(env),-(root)
+```
+all relevant partitions will be named under /dev/block/ as: bootloader, emmc, dtb, kernel, env and root
+```
 # ram and emmc addresses
 setenv os_addr            0x02000000  
 setenv emmc_os_offset     0x2100  
@@ -36,7 +53,7 @@ setenv bootargs           'blkdevparts=mmcblk1:4M(bootloader),48K@4M(emmc),80K@4
 mmc read ${dtb_addr} ${emmc_dtb_offset} ${emmc_dtb_size}  
 # read Linux kernel
 mmc read ${os_addr} ${emmc_os_offset} ${emmc_os_size}  
-
+```
 In my search for distributions for TV boxes, I came across a fascinating [project](https://github.com/devmfc/debian-on-amlogic) by developer **devmfc**. He has created an extremely lightweight distribution available in two versions, one based on Debian and the other on Ubuntu. As I mentioned earlier, I value efficiency, and this distribution represents the ideal setup for me. Moreover, the developer hacked Amlogic’s customized U-Boot (stock version) by identifying the header that makes it recognize the expected kernel—rejecting any other, including ours. This elegant solution eliminates the need for chainloading with a second U-Boot (mainline), as is typically required with other distributions, where a secondary bootloader is needed to launch the kernel.
 
 After gathering all this information, the final step is to develop a solution that allows us to customize the partition table to fit our needs. Specifically, my original partition map, before customization, was as follows:
