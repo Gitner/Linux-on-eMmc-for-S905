@@ -1,0 +1,44 @@
+# Copyright (c) 2020-2023 Devmfc
+# After editing this file you MUST remove the old u-boot header and 
+# generate a new u-boot header via:
+# mkimage -C none -A arm -T script -d emmc_bootscript.src emmc_bootscript
+# for at least older u-boots:
+# - max size= 4k
+# - one line per statement
+ 
+######## DEFAULTS ########
+
+# ram and emmc addresses
+setenv os_addr            0x02000000
+setenv emmc_os_offset     0x2100
+setenv emmc_os_size       0xFF00
+setenv dtb_addr           0x04000000
+setenv emmc_dtb_offset    0x2060
+setenv emmc_dtb_size      0xa0
+
+# args passed to kernel
+setenv bootargs           'blkdevparts=mmcblk1:4M(bootloader),48K@4M(emmc),80K@4144K(dtb),32640K@4224K(kernel),856M@36M(env),-(root) zswap.enabled=0 root=/dev/mmcblk1p6 rw rootfstype=ext4 rootwait console=tty0 no_console_suspend consoleblank=0 coherent_pool=2M net.ifnames=0 fsck.repair=yes fsck.mode=skip init_on_alloc=1 init_on_free=1 randomize_kstack_offset=on kfence.sample_interval=100 debugfs=off kfence.deferrable=1 watchdog.stop_on_reboot=0'
+
+########   HACK   ########
+
+# boot hack, vendor bootloader can only boot legacy u-boot image files
+# so hack image header together (I don't want separate uImage files), kernel image should NOT exceed 32MB 
+setenv verify no
+setenv cmd_hdr_create     'mw.l 0x1ffffc0 0 0x10;mw.l 0x1ffffc0 0x56190527;mw.l 0x1ffffcc 0x00000002;mw.l 0x1ffffd0 0x00000002;mw.l 0x1ffffd4 0x00000002;mw.l 0x1ffffdc 0x00021605'
+setenv cmd_hdr_crc        'mw.l 0x1ffffc4 0x25520aa8'
+setenv cmd_do_boot        'run cmd_hdr_create cmd_hdr_crc; bootm 0x1ffffc0 - ${dtb_addr}'
+
+########   MAIN  ########
+
+# loading device tree
+mmc read ${dtb_addr} ${emmc_dtb_offset} ${emmc_dtb_size}
+fdt addr ${dtb_addr}
+fdt resize 131072
+
+# read Linux kernel
+mmc read ${os_addr} ${emmc_os_offset} ${emmc_os_size}
+
+# print bootargs for debug
+echo "Starting linux with cmdline: ${bootargs}"
+
+run cmd_do_boot;
